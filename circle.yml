@@ -1,11 +1,11 @@
 ---
 machine:
   environment:
-    DB: postgresql
+    DB: mysql
   services:
-    - postgresql
+    - mysql
   ruby:
-    version: 2.1.5
+    version: 2.2.5
 dependencies:
   override:
     - bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
