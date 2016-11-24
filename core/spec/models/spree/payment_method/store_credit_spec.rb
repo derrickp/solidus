@@ -218,6 +218,19 @@ describe Spree::PaymentMethod::StoreCredit do
       end
     end
 
+    context "when attempting to credit for zero" do
+      let(:credit_amount) { 0 }
+
+      it "does not credit the store credit" do
+        expect_any_instance_of(Spree::StoreCredit).to_not receive(:credit)
+        subject
+      end
+
+      it "returns a success response" do
+        expect(subject.success?).to be true
+      end
+    end
+
     context "when the store credit isn't credited successfully" do
       before { allow_any_instance_of(Spree::StoreCredit).to receive_messages(credit: false) }
 
@@ -255,15 +268,41 @@ describe Spree::PaymentMethod::StoreCredit do
     let(:auth_code)    { "1-SC-20141111111111" }
     let(:captured_amount) { 10.0 }
 
-    context "capture event found" do
-      let!(:store_credit_event) { create(:store_credit_capture_event,
-                                        authorization_code: auth_code,
-                                        amount: captured_amount,
-                                        store_credit: store_credit) }
+    shared_examples "a spree payment method" do
+      it "returns an ActiveMerchant::Billing::Response" do
+        expect(subject).to be_instance_of(ActiveMerchant::Billing::Response)
+      end
+    end
 
-      it "creates a store credit for the same amount that was captured" do
-        expect_any_instance_of(Spree::StoreCredit).to receive(:credit).with(captured_amount, auth_code, store_credit.currency)
-        subject
+    context "capture event found" do
+      let!(:store_credit_event) do
+        create(
+          :store_credit_capture_event,
+          authorization_code: auth_code,
+          amount: captured_amount,
+          store_credit: store_credit,
+          originator: originator
+        )
+      end
+      let(:payment) { create(:payment, order: order, amount: 5) }
+      let(:originator) { nil }
+
+      it_behaves_like "a spree payment method"
+
+      context "when originator is nil" do
+        it "refunds the event amount" do
+          expect { subject }.to change{ store_credit.reload.amount_remaining }.
+            from(140).to(150)
+        end
+      end
+
+      context "when the originator is the payment" do
+        let(:originator) { payment }
+
+        it "refunds the payment credit allowed amount" do
+          expect { subject }.to change{ store_credit.reload.amount_remaining }.
+            from(140).to(145)
+        end
       end
     end
 
@@ -285,9 +324,9 @@ describe Spree::PaymentMethod::StoreCredit do
           Spree::PaymentMethod::StoreCredit.new.cancel('INVALID')
         end
 
-        it "returns false" do
-          expect(subject).to be false
-        end
+        it_behaves_like "a spree payment method"
+
+        it { expect(subject.success?).to be(false) }
       end
     end
   end
