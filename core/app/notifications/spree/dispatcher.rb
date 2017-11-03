@@ -1,10 +1,8 @@
 
 module Spree
   module Dispatcher
-    MESSAGES = Spree::PermittedMessages::MESSAGES
-
     def self.send_message(name, *args)
-      actions = MESSAGES.fetch(name) { Rails.logger.error("Dispatcher: Message #{name} not found, nothing more to do."); return }
+      actions = Spree::PermittedMessages::MESSAGES.fetch(name) { Rails.logger.error("Dispatcher: Message #{name} not found, nothing more to do."); return }
       actions.each do |action|
         begin
           method_name = action[1]
@@ -17,7 +15,7 @@ module Spree
             instance.public_send(method_name, *args)
           end
         rescue => exception
-          logger.error("Error sending message to #{action[0]} and method #{action[1]}")
+          Rails.logger.error("Error sending message to #{action[0]} and method #{action[1]}\n#{exception}")
         end
       end
     end
