@@ -1,7 +1,7 @@
 module Spree
-  # Spree::PermittedAttributes contains the attributes permitted through strong
-  # params in various controllers in the frontend. Extensions and stores that
-  # need additional params to be accepted can mutate these arrays to add them.
+  # Spree::PermittedMessages contains the messages permitted to be sent to the
+  # `Spree::Dispatcher`. Extensions and stores that need additional events to be
+  # accepted can mutate these arrays to add them.
   module PermittedMessages
     MESSAGES = {
       carton_shipped: [->(*args) { Spree::Config.carton_shipped_email_class.shipped_email(args) } ],
