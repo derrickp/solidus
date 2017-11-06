@@ -25,7 +25,7 @@ RSpec.describe Spree::Dispatcher do
 
     context 'message with no extra arguments' do
       before do
-        Spree::PermittedMessages::MESSAGES[:test_no_args] = [['TestMailer', 'no_args']]
+        Spree::PermittedMessages::MESSAGES[:test_no_args] = [->(args) { TestMailer.no_args }]
         TestMailer.no_args_called = false
       end
 
@@ -37,7 +37,7 @@ RSpec.describe Spree::Dispatcher do
 
     context 'message with arguments' do
       before do
-        Spree::PermittedMessages::MESSAGES[:test_args] = [['TestMailer', 'with_args']]
+        Spree::PermittedMessages::MESSAGES[:test_args] = [->(args) { TestMailer.with_args(*args) }]
         TestMailer.args = nil
       end
 
@@ -48,7 +48,7 @@ RSpec.describe Spree::Dispatcher do
 
       context 'receiver does not accept arguments' do
         before do
-          Spree::PermittedMessages::MESSAGES[:test_args] = [['TestMailer', 'no_args']]
+          Spree::PermittedMessages::MESSAGES[:test_args] = [->(args) { TestMailer.no_args }]
           TestMailer.no_args_called = false
         end
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::Dispatcher do
 
       context 'multiple receivers' do
         before do
-          Spree::PermittedMessages::MESSAGES[:test_args] = [['TestMailer', 'with_args'],['TestMailer','no_args']]
+          Spree::PermittedMessages::MESSAGES[:test_args] = [->(args) { TestMailer.with_args(*args) }, ->(args) { TestMailer.no_args }]
           TestMailer.args = nil
           TestMailer.no_args_called = false;
         end
