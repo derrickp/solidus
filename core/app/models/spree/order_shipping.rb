@@ -81,7 +81,7 @@ class Spree::OrderShipping
 
   def send_shipment_emails(carton)
     carton.orders.each do |order|
-      Spree::Dispatcher.send_message(:carton_shipped, order, carton)
+      Spree::Dispatcher.send_message(:carton_shipped, order: order, carton: carton)
     end
   end
 end
