@@ -2,6 +2,8 @@
 class Spree::OrderCancellations
   extend ActiveModel::Translation
 
+  include Observable
+
   # If you need to message a third party service when an item is canceled then
   # set short_ship_tax_notifier to an object that responds to:
   #     #call(unit_cancels)
