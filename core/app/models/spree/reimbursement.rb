@@ -2,6 +2,8 @@ module Spree
   class Reimbursement < Spree::Base
     class IncompleteReimbursementError < StandardError; end
 
+    include Observable
+
     belongs_to :order, inverse_of: :reimbursements
     belongs_to :customer_return, inverse_of: :reimbursements, touch: true
 
