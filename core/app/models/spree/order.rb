@@ -285,7 +285,9 @@ module Spree
     end
 
     def shipping
-      @shipping ||= Spree::OrderShipping.new(self)
+      @shipping ||= Spree::OrderShipping.new(self).tap do |order_shipping|
+        order_shipping.add_observer(Spree::Config.email_observer_class)
+      end
     end
 
     def cancellations

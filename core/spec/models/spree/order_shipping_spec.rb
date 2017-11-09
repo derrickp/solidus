@@ -3,10 +3,6 @@ require 'rails_helper'
 RSpec.describe Spree::OrderShipping do
   let(:order) { create(:order_ready_to_ship, line_items_count: 1) }
 
-  def emails
-    ActionMailer::Base.deliveries
-  end
-
   shared_examples 'shipment shipping' do
     it "marks the inventory units as shipped" do
       expect { subject }.to change { order.inventory_units.reload.map(&:state) }.from(['on_hand']).to(['shipped'])
@@ -15,17 +11,6 @@ RSpec.describe Spree::OrderShipping do
     it "creates a carton with the shipment's inventory units" do
       expect { subject }.to change { order.cartons.count }.by(1)
       expect(subject.inventory_units).to match_array(shipment.inventory_units)
-    end
-
-    describe "shipment email" do
-      it "should send a shipment email" do
-        expect {
-          perform_enqueued_jobs {
-            subject
-          }
-        }.to change { emails.size }.by(1)
-        expect(emails.last.subject).to eq("#{order.store.name} Shipment Notification ##{order.number}")
-      end
     end
 
     it "updates the order shipment state" do
@@ -66,6 +51,14 @@ RSpec.describe Spree::OrderShipping do
 
     it_behaves_like 'shipment shipping'
 
+    it 'notifies any observers' do
+      called = false
+      mock_observer = ->(*args) { called = true }
+      order.shipping.add_observer(mock_observer, :call)
+      subject
+      expect(called).to eq(true)
+    end
+
     context "with an external_number" do
       subject do
         order.shipping.ship(
@@ -95,22 +88,6 @@ RSpec.describe Spree::OrderShipping do
 
       it "sets the tracking-number" do
         expect(subject.tracking).to eq 'tracking-number'
-      end
-    end
-
-    context "when told to suppress the mailer" do
-      subject do
-        order.shipping.ship(
-          inventory_units: inventory_units,
-          stock_location: stock_location,
-          address: address,
-          shipping_method: shipping_method,
-          suppress_mailer: true
-        )
-      end
-
-      it "does not send a shipment email" do
-        expect { subject }.to_not change { emails.size }
       end
     end
   end
@@ -206,19 +183,6 @@ RSpec.describe Spree::OrderShipping do
       it "creates a carton with the shipment's inventory units" do
         expect { subject }.to change { order.cartons.count }.by(1)
         expect(subject.inventory_units).to match_array(unshipped_inventory)
-      end
-    end
-
-    context "when told to suppress the mailer" do
-      subject do
-        order.shipping.ship_shipment(
-          shipment,
-          suppress_mailer: true
-        )
-      end
-
-      it "does not send a shipment email" do
-        expect { subject }.to_not change { emails.size }
       end
     end
 

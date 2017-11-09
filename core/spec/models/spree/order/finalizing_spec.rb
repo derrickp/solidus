@@ -48,8 +48,11 @@ RSpec.describe Spree::Order, type: :model do
     end
 
     it "should notify any observers on `Spree::Order`" do
-      expect(order).to receive(:notify_observers).once
+      called = false
+      mock_observer = ->(*args) { called = true }
+      order.shipping.add_observer(mock_observer, :call)
       order.finalize!
+      expect(called).to eq(true)
     end
 
     it "should freeze all adjustments" do
