@@ -2,6 +2,9 @@
 # are actually shipped.  It also takes care of things like updating order and
 # shipment states and delivering shipment emails as needed.
 class Spree::OrderShipping
+
+  include Observable
+
   def initialize(order)
     @order = order
   end
