@@ -759,6 +759,11 @@ module Spree
       end
     end
 
+    def short_shipped_units(inventory_units)
+      changed(true)
+      notify_observers(:inventory_cancel, self, inventory_units.to_a)
+    end
+
     private
 
     def process_payments_before_complete
