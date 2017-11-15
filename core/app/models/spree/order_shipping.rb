@@ -3,8 +3,6 @@
 # shipment states and delivering shipment emails as needed.
 class Spree::OrderShipping
 
-  include Observable
-
   def initialize(order)
     @order = order
   end
@@ -60,6 +58,8 @@ class Spree::OrderShipping
         external_number: external_number,
         tracking: tracking_number
       )
+
+      carton.add_observers(@order)
     end
 
     inventory_units.map(&:shipment).uniq.each do |shipment|
@@ -74,8 +74,10 @@ class Spree::OrderShipping
       shipment.update_columns(state: 'shipped', shipped_at: Time.current)
     end
 
-    changed(stock_location.fulfillable? && !suppress_mailer) # sort of a hack
-    notify_observers(:shipped, carton)
+    # Wherever sets suppress_mailer should be deciding whether an observer is
+    # added to the order or not?
+    carton.shipped(suppress_mailer)
+
     @order.recalculate
 
     carton
