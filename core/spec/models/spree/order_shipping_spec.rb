@@ -52,11 +52,8 @@ RSpec.describe Spree::OrderShipping do
     it_behaves_like 'shipment shipping'
 
     it 'notifies any observers' do
-      called = false
-      mock_observer = ->(*args) { called = true }
-      order.shipping.add_observer(mock_observer, :call)
       subject
-      expect(called).to eq(true)
+      expect(order).to receive(:update)
     end
 
     context "with an external_number" do
