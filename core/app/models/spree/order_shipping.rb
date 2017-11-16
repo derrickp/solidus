@@ -59,7 +59,8 @@ class Spree::OrderShipping
         tracking: tracking_number
       )
 
-      carton.add_observers(@order)
+      carton.add_observer(@order)
+
     end
 
     inventory_units.map(&:shipment).uniq.each do |shipment|
@@ -74,9 +75,11 @@ class Spree::OrderShipping
       shipment.update_columns(state: 'shipped', shipped_at: Time.current)
     end
 
-    # Wherever sets suppress_mailer should be deciding whether an observer is
-    # added to the order or not?
-    carton.shipped(suppress_mailer)
+
+
+      # Wherever sets suppress_mailer should be deciding whether an observer is
+      # added to the order or not?
+      carton.shipped(suppress_mailer)
 
     @order.recalculate
 
