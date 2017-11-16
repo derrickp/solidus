@@ -289,9 +289,7 @@ module Spree
     end
 
     def cancellations
-      @cancellations ||= Spree::OrderCancellations.new(self).tap do |order_cancellation|
-        order_cancellation.add_observer(Spree::Config.email_observer_class)
-      end
+      @cancellations ||= Spree::OrderCancellations.new(self)
     end
 
     # Associates the specified user with the order.

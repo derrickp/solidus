@@ -38,7 +38,7 @@ class Spree::OrderCancellations
         end
 
         update_shipped_shipments(inventory_units)
-        @order.short_shipped_units(inventory_units)
+        @order.update(:cancelled, inventory_units)
       end
 
       @order.recalculate

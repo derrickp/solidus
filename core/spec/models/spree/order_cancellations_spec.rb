@@ -100,11 +100,8 @@ RSpec.describe Spree::OrderCancellations do
     end
 
     it "notifies any observers" do
-      called = false
-      mock_observer = ->(*args) { called = true }
-      order_cancellation.add_observer(mock_observer, :call)
       subject.short_ship([inventory_unit])
-      expect(called).to eq(true)
+      expect(order).to receive(:update)
     end
 
     context "with a who" do
