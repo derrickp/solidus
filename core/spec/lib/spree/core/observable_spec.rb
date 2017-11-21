@@ -1,11 +1,11 @@
-require 'rails_helper'
+require 'spree/core/Observable'
 
 $called = false
 
 class TestObservable
-  include Spree::Observable
+  include Spree::Core::Observable
 end
-RSpec.describe Spree::Observable do
+RSpec.describe Spree::Core::Observable do
 
   context 'observable' do
     subject { TestObservable.new }
