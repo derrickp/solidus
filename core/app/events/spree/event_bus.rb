@@ -4,7 +4,7 @@ module Spree
 
     class << self
       def publish(name, data)
-        puts name
+        puts "#{name} received at #{Time.now}"
       end
     end
   end
