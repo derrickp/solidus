@@ -40,8 +40,8 @@ class Spree::OrderCancellations
 
         update_shipped_shipments(inventory_units)
         Spree::Config.event_bus.publish(:order_inventory_cancelled,
-                                        order_id: @order.id,
-                                        inventory_units: inventory_units.to_a)
+                                        @order.id,
+                                        inventory_units.to_a)
       end
 
       @order.recalculate

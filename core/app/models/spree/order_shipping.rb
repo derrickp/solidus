@@ -71,7 +71,7 @@ class Spree::OrderShipping
       shipment.update_columns(state: 'shipped', shipped_at: Time.current)
     end
 
-    Spree::Config.event_bus.publish(:carton_shipped, carton: carton, suppress_mailer: suppress_mailer)
+    Spree::Config.event_bus.publish(:carton_shipped, carton, suppress_mailer)
     @order.recalculate
 
     carton

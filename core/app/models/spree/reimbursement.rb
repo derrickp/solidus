@@ -107,10 +107,10 @@ module Spree
 
       if unpaid_amount_within_tolerance?
         reimbursed!
-        Spree::Config.event_bus.publish(:reimbursement_processed, reimbursement_id: id)
+        Spree::Config.event_bus.publish(:reimbursement_processed, id)
       else
         errored!
-        Spree::Config.event_bus.publish(:reimbursement_failed, reimbursement_id: id)
+        Spree::Config.event_bus.publish(:reimbursement_failed, id)
         raise IncompleteReimbursementError, I18n.t("spree.validation.unpaid_amount_not_zero", amount: unpaid_amount)
       end
     end
