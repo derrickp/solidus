@@ -143,8 +143,8 @@ RSpec.describe Spree::Reimbursement, type: :model do
       end
     end
 
-    it "triggers the reimbursement mailer to be sent" do
-      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
+    it "sends a notification on the bus" do
+      expect_any_instance_of(Spree::EventBus).to receive(:publish)
       subject
     end
   end

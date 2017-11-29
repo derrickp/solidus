@@ -432,7 +432,7 @@ module Spree
 
       touch :completed_at
 
-      Spree::EventBus.publish(:order_confirmed, order_id: order.id)
+      Spree::Config.event_bus.publish(:order_confirmed, order_id: id)
     end
 
     def fulfill!
@@ -857,7 +857,7 @@ module Spree
       payments.completed.each { |payment| payment.cancel! unless payment.fully_refunded? }
       payments.store_credits.pending.each(&:void_transaction!)
 
-      Spree::EventBus.publish(:order_cancelled, order_id: order.id)
+      Spree::Config.event_bus.publish(:order_cancelled, order_id: id)
       recalculate
     end
 

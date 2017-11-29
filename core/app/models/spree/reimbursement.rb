@@ -106,7 +106,7 @@ module Spree
       if unpaid_amount_within_tolerance?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
-        Spree::EventBus.publish(:reimbursement_processed, reimbursement_id: id)
+        Spree::Config.event_bus.publish(:reimbursement_processed, reimbursement_id: id)
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
