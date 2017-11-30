@@ -131,7 +131,10 @@ RSpec.describe Spree::Reimbursement, type: :model do
 
       it "sends a notification on the bus" do
         expect_any_instance_of(Spree::EventBus).to receive(:publish)
-        subject
+        begin
+          subject
+        rescue
+        end
       end
 
       it 'raises IncompleteReimbursement error' do
