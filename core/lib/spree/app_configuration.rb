@@ -370,6 +370,10 @@ module Spree
     # returns a String
     class_name_attribute :taxon_url_parametizer_class, default: 'ActiveSupport::Inflector'
 
+    class_name_attribute :order_mailer_class, default: 'Spree::OrderMailer'
+    class_name_attribute :reimbursement_mailer_class, default: 'Spree::ReimbursementMailer'
+
+
     # Allows providing your own class instance for generating order numbers.
     #
     # @!attribute [rw] order_number_generator
