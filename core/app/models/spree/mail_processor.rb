@@ -33,6 +33,6 @@ end
 
 Spree::Config.event_bus.subscribe(:order_confirmed, Spree::MailProcessor, :send_confirm_email)
 Spree::Config.event_bus.subscribe(:order_cancelled, Spree::MailProcessor, :send_cancel_email)
-Spree::Config.event_bus.subscribe(:order_inventory_cancelled, Spree::MailProcessor, :order_inventory_cancelled)
+Spree::Config.event_bus.subscribe(:order_inventory_cancelled, Spree::MailProcessor, :send_inventory_cancellation_email)
 Spree::Config.event_bus.subscribe(:reimbursement_processed, Spree::MailProcessor, :send_reimbursement_email)
 Spree::Config.event_bus.subscribe(:carton_shipped, Spree::MailProcessor, :send_carton_shipped_emails)
